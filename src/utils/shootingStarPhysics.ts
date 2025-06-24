@@ -1,3 +1,4 @@
+
 import { ShootingStar } from '../types/stars';
 
 export const createShootingStar = (width: number, height: number, isMobile: boolean): ShootingStar => {
@@ -27,7 +28,7 @@ export const createShootingStar = (width: number, height: number, isMobile: bool
     vx,
     vy,
     life: 0,
-    maxLife: isMobile ? 60 : 80,
+    maxLife: isMobile ? 120 : 160, // Increased from 60/80 to 120/160 for longer flight paths
     trail: [],
     curveStrength: Math.random() * 0.015 + 0.01, // Reduced from 0.03 + 0.02 to 0.015 + 0.01
     curveDirection: Math.random() < 0.5 ? -1 : 1,
