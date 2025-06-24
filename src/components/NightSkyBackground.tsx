@@ -78,22 +78,22 @@ const NightSkyBackground: React.FC = () => {
           globalFadeMultiplier = Math.max(0, star.y / fadeStartY);
         }
         
-        // Draw trail with fade effect
+        // Draw trail with fade effect - smaller, more contiguous dots
         star.trail.forEach((point, index) => {
           if (point.opacity > 0) {
             ctx.save();
-            ctx.globalAlpha = point.opacity * 0.8 * globalFadeMultiplier;
+            ctx.globalAlpha = point.opacity * 0.9 * globalFadeMultiplier;
             
-            // Create lighter blue glow effect with larger radius
-            const trailSize = isMobile ? 4 : 6;
+            // Create lighter blue glow effect with smaller radius for smoother trail
+            const trailSize = isMobile ? 2 : 3; // Reduced from 4/6 to 2/3
             const gradient = ctx.createRadialGradient(point.x, point.y, 0, point.x, point.y, trailSize);
             gradient.addColorStop(0, '#7dc8ff');
-            gradient.addColorStop(0.5, 'rgba(125, 200, 255, 0.5)');
+            gradient.addColorStop(0.3, 'rgba(125, 200, 255, 0.7)'); // More opaque middle
             gradient.addColorStop(1, 'rgba(125, 200, 255, 0)');
             
             ctx.fillStyle = gradient;
             ctx.beginPath();
-            ctx.arc(point.x, point.y, trailSize * 0.6, 0, Math.PI * 2);
+            ctx.arc(point.x, point.y, trailSize * 0.8, 0, Math.PI * 2); // Increased coverage
             ctx.fill();
             ctx.restore();
           }
