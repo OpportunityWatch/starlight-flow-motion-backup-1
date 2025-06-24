@@ -1,0 +1,124 @@
+
+import React, { useRef, useEffect } from 'react';
+import { useStars } from '../hooks/useStars';
+import { useShootingStars } from '../hooks/useShootingStars';
+import { useIsMobile } from '../hooks/use-mobile';
+
+const NightSkyBackground: React.FC = () => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const animationRef = useRef<number>();
+  const isMobile = useIsMobile();
+  
+  const [dimensions, setDimensions] = React.useState({ width: 0, height: 0 });
+  const { stars, getStarOpacity } = useStars(dimensions.width, dimensions.height, isMobile);
+  const { shootingStars, updateShootingStars } = useShootingStars(dimensions.width, dimensions.height, isMobile);
+  
+  useEffect(() => {
+    const updateDimensions = () => {
+      setDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+    
+    updateDimensions();
+    window.addEventListener('resize', updateDimensions);
+    return () => window.removeEventListener('resize', updateDimensions);
+  }, []);
+  
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
+    canvas.width = dimensions.width;
+    canvas.height = dimensions.height;
+    
+    let startTime = Date.now();
+    
+    const animate = () => {
+      const currentTime = Date.now();
+      const elapsed = (currentTime - startTime) / 1000;
+      
+      // Clear canvas
+      ctx.clearRect(0, 0, dimensions.width, dimensions.height);
+      
+      // Draw gradient background
+      const gradient = ctx.createLinearGradient(0, 0, 0, dimensions.height);
+      gradient.addColorStop(0, '#1a1a2e');
+      gradient.addColorStop(1, '#16537e');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, dimensions.width, dimensions.height);
+      
+      // Draw twinkling stars
+      stars.forEach(star => {
+        const opacity = getStarOpacity(star, elapsed);
+        ctx.save();
+        ctx.globalAlpha = opacity;
+        ctx.fillStyle = 'white';
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+      
+      // Update and draw shooting stars
+      updateShootingStars();
+      
+      shootingStars.forEach(star => {
+        // Draw trail
+        star.trail.forEach((point, index) => {
+          if (point.opacity > 0) {
+            ctx.save();
+            ctx.globalAlpha = point.opacity * 0.8;
+            
+            // Create blue glow effect
+            const gradient = ctx.createRadialGradient(point.x, point.y, 0, point.x, point.y, 3);
+            gradient.addColorStop(0, '#4fb3ff');
+            gradient.addColorStop(0.5, 'rgba(79, 179, 255, 0.5)');
+            gradient.addColorStop(1, 'rgba(79, 179, 255, 0)');
+            
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(point.x, point.y, 2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+          }
+        });
+        
+        // Draw shooting star core
+        ctx.save();
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = 'white';
+        ctx.shadowColor = '#4fb3ff';
+        ctx.shadowBlur = 8;
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, 2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+      
+      animationRef.current = requestAnimationFrame(animate);
+    };
+    
+    animate();
+    
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, [dimensions, stars, shootingStars, getStarOpacity, updateShootingStars]);
+  
+  return (
+    <canvas
+      ref={canvasRef}
+      className="fixed inset-0 w-full h-full pointer-events-none"
+      style={{ zIndex: -10 }}
+    />
+  );
+};
+
+export default NightSkyBackground;
