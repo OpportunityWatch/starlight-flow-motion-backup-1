@@ -28,7 +28,7 @@ export const createShootingStar = (width: number, height: number, isMobile: bool
     vx,
     vy,
     life: 0,
-    maxLife: isMobile ? 60 : 80, // Increased further to ensure full screen travel
+    maxLife: isMobile ? 60 : 80,
     trail: [],
     curveStrength: Math.random() * 0.03 + 0.02,
     curveDirection: Math.random() < 0.5 ? -1 : 1,
@@ -40,16 +40,25 @@ export const updateShootingStar = (star: ShootingStar): ShootingStar => {
   star.vx += star.curveStrength * star.curveDirection;
   star.vy += star.curveStrength * 0.3; // Slight upward curve
   
+  // Calculate speed to determine how many trail points to add
+  const speed = Math.sqrt(star.vx * star.vx + star.vy * star.vy);
+  const trailPointsToAdd = Math.max(1, Math.ceil(speed / 3)); // Add more points for faster stars
+  
+  // Add multiple trail points for smoother trails on fast stars
+  for (let i = 0; i < trailPointsToAdd; i++) {
+    const interpolationFactor = i / trailPointsToAdd;
+    const trailX = star.x + (star.vx * interpolationFactor);
+    const trailY = star.y + (star.vy * interpolationFactor);
+    star.trail.unshift({ x: trailX, y: trailY, opacity: 1 });
+  }
+  
   // Update position
   star.x += star.vx;
   star.y += star.vy;
   
-  // Add to trail
-  star.trail.unshift({ x: star.x, y: star.y, opacity: 1 });
-  
   // Limit trail length and fade
   if (star.trail.length > star.maxLife) {
-    star.trail.pop();
+    star.trail.splice(star.maxLife);
   }
   
   // Fade trail
