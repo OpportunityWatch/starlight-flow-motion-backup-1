@@ -28,7 +28,7 @@ export const createShootingStar = (width: number, height: number, isMobile: bool
     vx,
     vy,
     life: 0,
-    maxLife: isMobile ? 40 : 50, // Increased to allow full screen travel
+    maxLife: isMobile ? 60 : 80, // Increased further to ensure full screen travel
     trail: [],
     curveStrength: Math.random() * 0.03 + 0.02,
     curveDirection: Math.random() < 0.5 ? -1 : 1,
@@ -63,6 +63,6 @@ export const updateShootingStar = (star: ShootingStar): ShootingStar => {
 };
 
 export const shouldRemoveShootingStar = (star: ShootingStar, height: number): boolean => {
-  // Only remove when star reaches the very top of screen or exceeds max life significantly
-  return star.y < -50 || star.life > star.maxLife * 2;
+  // Only remove when star reaches well past the top of screen or exceeds max life significantly
+  return star.y < -100 || star.life > star.maxLife * 2.5;
 };

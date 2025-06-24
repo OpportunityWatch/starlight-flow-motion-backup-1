@@ -69,7 +69,7 @@ const NightSkyBackground: React.FC = () => {
       
       currentShootingStars.forEach(star => {
         // Calculate fade factor based on position near top of screen
-        const fadeZoneHeight = dimensions.height * 0.15; // Top 15% of screen
+        const fadeZoneHeight = dimensions.height * 0.05; // Top 5% of screen
         const fadeStartY = fadeZoneHeight;
         let globalFadeMultiplier = 1;
         
