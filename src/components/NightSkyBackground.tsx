@@ -68,34 +68,36 @@ const NightSkyBackground: React.FC = () => {
       const currentShootingStars = getUpdatedShootingStars();
       
       currentShootingStars.forEach(star => {
-        // Draw trail
+        // Draw trail with larger points
         star.trail.forEach((point, index) => {
           if (point.opacity > 0) {
             ctx.save();
             ctx.globalAlpha = point.opacity * 0.8;
             
-            // Create blue glow effect
-            const gradient = ctx.createRadialGradient(point.x, point.y, 0, point.x, point.y, 3);
+            // Create blue glow effect with larger radius
+            const trailSize = isMobile ? 4 : 6;
+            const gradient = ctx.createRadialGradient(point.x, point.y, 0, point.x, point.y, trailSize);
             gradient.addColorStop(0, '#4fb3ff');
             gradient.addColorStop(0.5, 'rgba(79, 179, 255, 0.5)');
             gradient.addColorStop(1, 'rgba(79, 179, 255, 0)');
             
             ctx.fillStyle = gradient;
             ctx.beginPath();
-            ctx.arc(point.x, point.y, 2, 0, Math.PI * 2);
+            ctx.arc(point.x, point.y, trailSize * 0.6, 0, Math.PI * 2);
             ctx.fill();
             ctx.restore();
           }
         });
         
-        // Draw shooting star core
+        // Draw shooting star core - much larger
         ctx.save();
         ctx.globalAlpha = 1;
         ctx.fillStyle = 'white';
         ctx.shadowColor = '#4fb3ff';
-        ctx.shadowBlur = 8;
+        ctx.shadowBlur = isMobile ? 12 : 16;
         ctx.beginPath();
-        ctx.arc(star.x, star.y, 2, 0, Math.PI * 2);
+        const coreSize = isMobile ? 4 : 6;
+        ctx.arc(star.x, star.y, coreSize, 0, Math.PI * 2);
         ctx.fill();
         ctx.restore();
       });

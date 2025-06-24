@@ -10,15 +10,15 @@ export const createShootingStar = (width: number, height: number, isMobile: bool
     // Bottom spawn
     x = Math.random() * width;
     y = height + 10;
-    vx = (Math.random() - 0.5) * (isMobile ? 3 : 4);
-    vy = -(Math.random() * 2 + 3) * (isMobile ? 0.8 : 1);
+    vx = (Math.random() - 0.5) * (isMobile ? 4 : 6);
+    vy = -(Math.random() * 3 + 4) * (isMobile ? 1 : 1.2);
   } else {
     // Side spawn (lower 25%)
     const isLeft = Math.random() < 0.5;
     x = isLeft ? -10 : width + 10;
     y = height * 0.75 + Math.random() * height * 0.25;
-    vx = isLeft ? Math.random() * 3 + 2 : -(Math.random() * 3 + 2);
-    vy = -(Math.random() * 2 + 1) * (isMobile ? 0.8 : 1);
+    vx = isLeft ? Math.random() * 4 + 3 : -(Math.random() * 4 + 3);
+    vy = -(Math.random() * 3 + 2) * (isMobile ? 1 : 1.2);
   }
   
   return {
@@ -28,17 +28,17 @@ export const createShootingStar = (width: number, height: number, isMobile: bool
     vx,
     vy,
     life: 0,
-    maxLife: isMobile ? 25 : 35,
+    maxLife: isMobile ? 30 : 40,
     trail: [],
-    curveStrength: Math.random() * 0.02 + 0.01,
+    curveStrength: Math.random() * 0.03 + 0.02,
     curveDirection: Math.random() < 0.5 ? -1 : 1,
   };
 };
 
 export const updateShootingStar = (star: ShootingStar): ShootingStar => {
-  // Apply curve effect (simulating orbital entry)
+  // Apply stronger curve effect for more pronounced arc
   star.vx += star.curveStrength * star.curveDirection;
-  star.vy += star.curveStrength * 0.5; // Slight upward curve
+  star.vy += star.curveStrength * 0.3; // Slight upward curve
   
   // Update position
   star.x += star.vx;
