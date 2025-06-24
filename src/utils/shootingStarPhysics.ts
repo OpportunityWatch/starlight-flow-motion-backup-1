@@ -1,4 +1,3 @@
-
 import { ShootingStar } from '../types/stars';
 
 export const createShootingStar = (width: number, height: number, isMobile: boolean): ShootingStar => {
@@ -30,15 +29,15 @@ export const createShootingStar = (width: number, height: number, isMobile: bool
     life: 0,
     maxLife: isMobile ? 60 : 80,
     trail: [],
-    curveStrength: Math.random() * 0.03 + 0.02,
+    curveStrength: Math.random() * 0.015 + 0.01, // Reduced from 0.03 + 0.02 to 0.015 + 0.01
     curveDirection: Math.random() < 0.5 ? -1 : 1,
   };
 };
 
 export const updateShootingStar = (star: ShootingStar): ShootingStar => {
-  // Apply stronger curve effect for more pronounced arc
+  // Apply gentler curve effect for more subtle arc
   star.vx += star.curveStrength * star.curveDirection;
-  star.vy += star.curveStrength * 0.3; // Slight upward curve
+  star.vy += star.curveStrength * 0.2; // Reduced from 0.3 to 0.2 for less upward curve
   
   // Calculate speed to determine how many trail points to add
   const speed = Math.sqrt(star.vx * star.vx + star.vy * star.vy);
