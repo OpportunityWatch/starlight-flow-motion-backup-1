@@ -1,5 +1,4 @@
-
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { ShootingStar } from '../types/stars';
 import { createShootingStar, updateShootingStar, shouldRemoveShootingStar } from '../utils/shootingStarPhysics';
 
@@ -7,11 +6,15 @@ export const useShootingStars = (width: number, height: number, isMobile: boolea
   const [shootingStars, setShootingStars] = useState<ShootingStar[]>([]);
   const [nextClusterTime, setNextClusterTime] = useState(0);
   const [isInCluster, setIsInCluster] = useState(false);
-  const [clusterCount, setClusterCount] = useState(0);
+  const shootingStarsRef = useRef<ShootingStar[]>([]);
+  
+  // Keep ref in sync with state
+  useEffect(() => {
+    shootingStarsRef.current = shootingStars;
+  }, [shootingStars]);
   
   const spawnShootingStarCluster = useCallback(() => {
     const clusterSize = Math.floor(Math.random() * 3) + 1; // 1-3 stars
-    const stars: ShootingStar[] = [];
     
     for (let i = 0; i < clusterSize; i++) {
       setTimeout(() => {
@@ -20,7 +23,6 @@ export const useShootingStars = (width: number, height: number, isMobile: boolea
       }, i * (Math.random() * 500 + 200)); // 200-700ms delay between stars
     }
     
-    setClusterCount(clusterSize);
     setIsInCluster(true);
     
     // Set next cluster time (1-4 seconds quiet period)
@@ -39,20 +41,28 @@ export const useShootingStars = (width: number, height: number, isMobile: boolea
     return () => clearInterval(interval);
   }, [nextClusterTime, isInCluster, spawnShootingStarCluster]);
   
-  const updateShootingStars = useCallback(() => {
-    setShootingStars(prev => {
-      const updated = prev
-        .map(updateShootingStar)
-        .filter(star => !shouldRemoveShootingStar(star, height));
+  // Return a function that can be called to get updated stars without causing re-renders
+  const getUpdatedShootingStars = useCallback(() => {
+    const currentStars = shootingStarsRef.current;
+    const updated = currentStars
+      .map(updateShootingStar)
+      .filter(star => !shouldRemoveShootingStar(star, height));
+    
+    // Update the ref immediately
+    shootingStarsRef.current = updated;
+    
+    // Only update state if there's a meaningful change
+    if (updated.length !== currentStars.length || updated.length === 0) {
+      setShootingStars(updated);
       
       // Check if cluster is complete
       if (isInCluster && updated.length === 0) {
         setIsInCluster(false);
       }
-      
-      return updated;
-    });
+    }
+    
+    return updated;
   }, [height, isInCluster]);
   
-  return { shootingStars, updateShootingStars };
+  return { shootingStars: shootingStarsRef.current, getUpdatedShootingStars };
 };

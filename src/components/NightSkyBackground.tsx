@@ -11,7 +11,7 @@ const NightSkyBackground: React.FC = () => {
   
   const [dimensions, setDimensions] = React.useState({ width: 0, height: 0 });
   const { stars, getStarOpacity } = useStars(dimensions.width, dimensions.height, isMobile);
-  const { shootingStars, updateShootingStars } = useShootingStars(dimensions.width, dimensions.height, isMobile);
+  const { getUpdatedShootingStars } = useShootingStars(dimensions.width, dimensions.height, isMobile);
   
   useEffect(() => {
     const updateDimensions = () => {
@@ -64,10 +64,10 @@ const NightSkyBackground: React.FC = () => {
         ctx.restore();
       });
       
-      // Update and draw shooting stars
-      updateShootingStars();
+      // Get updated shooting stars and draw them
+      const currentShootingStars = getUpdatedShootingStars();
       
-      shootingStars.forEach(star => {
+      currentShootingStars.forEach(star => {
         // Draw trail
         star.trail.forEach((point, index) => {
           if (point.opacity > 0) {
@@ -110,7 +110,7 @@ const NightSkyBackground: React.FC = () => {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [dimensions, stars, shootingStars, getStarOpacity, updateShootingStars]);
+  }, [dimensions, stars, getStarOpacity, getUpdatedShootingStars]);
   
   return (
     <canvas
