@@ -89,14 +89,14 @@ const NightSkyBackground: React.FC = () => {
           }
         });
         
-        // Draw shooting star core - much larger
+        // Draw shooting star core - 50% smaller and blue
         ctx.save();
         ctx.globalAlpha = 1;
-        ctx.fillStyle = 'white';
+        ctx.fillStyle = '#4fb3ff';
         ctx.shadowColor = '#4fb3ff';
         ctx.shadowBlur = isMobile ? 12 : 16;
         ctx.beginPath();
-        const coreSize = isMobile ? 4 : 6;
+        const coreSize = isMobile ? 2 : 3;
         ctx.arc(star.x, star.y, coreSize, 0, Math.PI * 2);
         ctx.fill();
         ctx.restore();
