@@ -74,12 +74,12 @@ const NightSkyBackground: React.FC = () => {
             ctx.save();
             ctx.globalAlpha = point.opacity * 0.8;
             
-            // Create blue glow effect with larger radius
+            // Create lighter blue glow effect with larger radius
             const trailSize = isMobile ? 4 : 6;
             const gradient = ctx.createRadialGradient(point.x, point.y, 0, point.x, point.y, trailSize);
-            gradient.addColorStop(0, '#4fb3ff');
-            gradient.addColorStop(0.5, 'rgba(79, 179, 255, 0.5)');
-            gradient.addColorStop(1, 'rgba(79, 179, 255, 0)');
+            gradient.addColorStop(0, '#7dc8ff');
+            gradient.addColorStop(0.5, 'rgba(125, 200, 255, 0.5)');
+            gradient.addColorStop(1, 'rgba(125, 200, 255, 0)');
             
             ctx.fillStyle = gradient;
             ctx.beginPath();
@@ -89,11 +89,11 @@ const NightSkyBackground: React.FC = () => {
           }
         });
         
-        // Draw shooting star core - 50% smaller and blue
+        // Draw shooting star core - 50% smaller and lighter blue
         ctx.save();
         ctx.globalAlpha = 1;
-        ctx.fillStyle = '#4fb3ff';
-        ctx.shadowColor = '#4fb3ff';
+        ctx.fillStyle = '#7dc8ff';
+        ctx.shadowColor = '#7dc8ff';
         ctx.shadowBlur = isMobile ? 12 : 16;
         ctx.beginPath();
         const coreSize = isMobile ? 2 : 3;
