@@ -1,4 +1,5 @@
 
+
 import { ShootingStar } from '../types/stars';
 
 export const createShootingStar = (width: number, height: number, isMobile: boolean): ShootingStar => {
@@ -7,18 +8,18 @@ export const createShootingStar = (width: number, height: number, isMobile: bool
   
   // Spawn from bottom and lower 25% of sides
   if (spawnSide < 0.6) {
-    // Bottom spawn
+    // Bottom spawn - increased speed by 10%
     x = Math.random() * width;
     y = height + 10;
-    vx = (Math.random() - 0.5) * (isMobile ? 4 : 6);
-    vy = -(Math.random() * 3 + 4) * (isMobile ? 1 : 1.2);
+    vx = (Math.random() - 0.5) * (isMobile ? 4.4 : 6.6); // 4*1.1 = 4.4, 6*1.1 = 6.6
+    vy = -(Math.random() * 3 + 4) * (isMobile ? 1.1 : 1.32); // 1*1.1 = 1.1, 1.2*1.1 = 1.32
   } else {
-    // Side spawn (lower 25%)
+    // Side spawn (lower 25%) - increased speed by 10%
     const isLeft = Math.random() < 0.5;
     x = isLeft ? -10 : width + 10;
     y = height * 0.75 + Math.random() * height * 0.25;
-    vx = isLeft ? Math.random() * 4 + 3 : -(Math.random() * 4 + 3);
-    vy = -(Math.random() * 3 + 2) * (isMobile ? 1 : 1.2);
+    vx = isLeft ? (Math.random() * 4 + 3) * 1.1 : -((Math.random() * 4 + 3) * 1.1); // Increased by 10%
+    vy = -(Math.random() * 3 + 2) * (isMobile ? 1.1 : 1.32); // 1*1.1 = 1.1, 1.2*1.1 = 1.32
   }
   
   return {
