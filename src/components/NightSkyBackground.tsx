@@ -68,11 +68,21 @@ const NightSkyBackground: React.FC = () => {
       const currentShootingStars = getUpdatedShootingStars();
       
       currentShootingStars.forEach(star => {
-        // Draw trail with larger points
+        // Calculate fade factor based on position near top of screen
+        const fadeZoneHeight = dimensions.height * 0.15; // Top 15% of screen
+        const fadeStartY = fadeZoneHeight;
+        let globalFadeMultiplier = 1;
+        
+        if (star.y < fadeStartY) {
+          // Gradually fade out as star approaches top
+          globalFadeMultiplier = Math.max(0, star.y / fadeStartY);
+        }
+        
+        // Draw trail with fade effect
         star.trail.forEach((point, index) => {
           if (point.opacity > 0) {
             ctx.save();
-            ctx.globalAlpha = point.opacity * 0.8;
+            ctx.globalAlpha = point.opacity * 0.8 * globalFadeMultiplier;
             
             // Create lighter blue glow effect with larger radius
             const trailSize = isMobile ? 4 : 6;
@@ -89,12 +99,12 @@ const NightSkyBackground: React.FC = () => {
           }
         });
         
-        // Draw shooting star core - 50% smaller and lighter blue
+        // Draw shooting star core with fade effect
         ctx.save();
-        ctx.globalAlpha = 1;
+        ctx.globalAlpha = 1 * globalFadeMultiplier;
         ctx.fillStyle = '#7dc8ff';
         ctx.shadowColor = '#7dc8ff';
-        ctx.shadowBlur = isMobile ? 12 : 16;
+        ctx.shadowBlur = (isMobile ? 12 : 16) * globalFadeMultiplier;
         ctx.beginPath();
         const coreSize = isMobile ? 2 : 3;
         ctx.arc(star.x, star.y, coreSize, 0, Math.PI * 2);
